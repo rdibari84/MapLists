@@ -20,6 +20,6 @@
     "scripts": ["background.js"]
   },
   "permissions": [
-      "storage", "tabs", "activeTab",  "history", "webNavigation"
+      "storage", "tabs", "activeTab",  "history", "webNavigation", "https://www.google.de/maps/@*/data=*"
     ]
 }

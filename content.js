@@ -1,5 +1,5 @@
-alert("Hello FooBar from your Chrome extension!")
-console.log("Hello World!");
+//alert("Hello FooBar from your Chrome extension!")
+//console.log("Hello World!");
 
 chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
