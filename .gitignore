@@ -5,6 +5,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+#emacs
+*~*
+*#*
+
+# JS packages
+*bootstrap*
+*jquery*
+
 # Runtime data
 pids
 *.pid
