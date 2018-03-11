@@ -43,11 +43,8 @@ chrome.extension.onMessage.addListener(
 		}
 	    });
 	} // close history
-   
     } // close function
 ); // close chrome extension
-
-//window.history.pushState(function(details) {
 
 function accessListElements() {
     var singleElement = document.querySelectorAll("div.section-common-icon");
