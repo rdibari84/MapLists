@@ -1,63 +1,59 @@
-//alert("Hello FooBar from your Chrome extension!")
-//console.log("Hello World!");
+
+var key = "cafeColor";
+var apikey;
 
 chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
-	console.log("onMessage! request: ", request.message);
+
+	if (request.message.startsWith("A")) {
+	    apikey = request.message;
+	}
 
 	if (request.message == "browser_action_clicked") {
 	    console.log("browser_action_clicked");
 	    var mylist = accessListElements();
-	    mylist.forEach( function(currentValue, currentIndex, listObj) { 
-		element = currentValue;
-		textElement = element.querySelector("div.section-list-item-text");
-		//console.log('text: ', textElement.textContent);
-		icon = element.querySelector("div.section-common-icon");
-		//console.log('icon color: ', icon.style.backgroundColor);
-		
-		if (textElement.textContent.includes('cafe')) {
-		    save_options(icon, "cafeColor", "red");
-		}
-	    });
+	    setListColor(mylist, "red", true);
 	} // close browser action
 
-	if (request.message == "history_on_visited") {
-	    console.log("history_on_visited");
+	if (request.message == "history_on_visited") { 
 	    console.log("checking if there is a saved color");
-	    get_data("cafeColor", function (value) {
-		console.log(value);
-		if (value != 'undefined') {
-		    var list = accessListElements();
-		    list.forEach(
-			function(currentValue, currentIndex, listObj) {
-			    element = currentValue;
-			    textElement = element.querySelector("div.section-list-item-text");
-			    //console.log('text: ', textElement.textContent);
-			    icon = element.querySelector("div.section-common-icon");
-			    if (textElement.textContent.includes('cafe')) {
-				icon.style.backgroundColor = 'red';
-				console.log("setting icon background to ", value);
-			    }
-			}
-		    );
+	    get_data("cafeColor", function(result) {
+		console.log("color: ", result.key);
+		if (result.key != 'undefined') {
+		    var mylist = accessListElements();
+		    setListColor(mylist, result.key, false);
+		} else {
+		    console.log("color is undefined");
 		}
 	    });
 	} // close history
     } // close function
 ); // close chrome extension
 
+function setListColor(mylist, color, saveObject){
+    if (mylist != 'undefined') {
+	mylist.forEach( function(currentValue) { 
+	    element = currentValue;
+	    textElement = element.querySelector("div.section-list-item-text");
+	    icon = element.querySelector("div.section-common-icon");
+	    
+	    if (textElement.textContent.includes('cafe')) {
+		icon.style.backgroundColor = color;
+		if (saveObject) {
+		    save_options("cafeColor", color);
+		}
+	    }
+	});
+    }
+}
+
 function accessListElements() {
     var singleElement = document.querySelectorAll("div.section-common-icon");
-    console.log(singleElement);
-
     var savedPlacesList = document.querySelectorAll("button.section-list-item-content.section-list-item-button");
-    console.log(savedPlacesList);
-    
     return savedPlacesList;
 }
 
-function save_options(html, key, value) {
-    html.style.backgroundColor = value;
+function save_options(key, value) {
     chrome.storage.sync.set({ key: value }, function(){
         console.log("saving data. {", key, ":", value, "}");
     });
