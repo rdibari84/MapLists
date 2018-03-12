@@ -17,11 +17,11 @@ chrome.extension.onMessage.addListener(
 
 	if (request.message == "history_on_visited") { 
 	    console.log("checking if there is a saved color");
-	    get_data("cafeColor", function(result) {
-		console.log("color: ", result.key);
+	    chrome.storage.sync.get("cafeColor", function(result) {
+		console.log("color: ", result[key]);
 		if (result.key != 'undefined') {
 		    var mylist = accessListElements();
-		    setListColor(mylist, result.key, false);
+		    setListColor(mylist, result[key], false);
 		} else {
 		    console.log("color is undefined");
 		}
@@ -31,20 +31,18 @@ chrome.extension.onMessage.addListener(
 ); // close chrome extension
 
 function setListColor(mylist, color, saveObject){
-    if (mylist != 'undefined') {
-	mylist.forEach( function(currentValue) { 
-	    element = currentValue;
-	    textElement = element.querySelector("div.section-list-item-text");
-	    icon = element.querySelector("div.section-common-icon");
-	    
-	    if (textElement.textContent.includes('cafe')) {
-		icon.style.backgroundColor = color;
-		if (saveObject) {
-		    save_options("cafeColor", color);
-		}
+    mylist.forEach( function(currentValue) { 
+	element = currentValue;
+	textElement = element.querySelector("div.section-list-item-text");
+	icon = element.querySelector("div.section-common-icon");
+	
+	if (textElement.textContent.includes('cafe')) {
+	    icon.style.backgroundColor = color;
+	    if (saveObject) {
+		save_options("cafeColor", color);
 	    }
-	});
-    }
+	}
+    });
 }
 
 function accessListElements() {
@@ -54,16 +52,20 @@ function accessListElements() {
 }
 
 function save_options(key, value) {
-    chrome.storage.sync.set({ key: value }, function(){
-        console.log("saving data. {", key, ":", value, "}");
+    var obj = {}
+    obj[key]=value;
+    chrome.storage.sync.set(obj, function(){
+        console.log("saving data: ", obj);
+    });
+
+    // make sure its saved
+    chrome.storage.sync.get(key, function(result) {
+	var color = result[key];
+	if (color == 'undefined') {
+	    // throw error
+	}
     });
 }
-
-function get_data(value, callback) {
-    var items = chrome.storage.sync.get(value, callback);
-    return items;
-}
-
 
 // <div class="dropdown">
 //   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
