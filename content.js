@@ -2,34 +2,31 @@
 var colorkey = "cafeColor";
 var apikey = "apikey";
 var colorToSet = "red";
+var map;
 
 chrome.runtime.onMessage.addListener(
-  function(request) {
-
+  function(request, sender, sendResponse) {
+    console.log("heard a message!");
     // if this is the first time the extension has been loaded
     if (request.message["message"] == "firstTime") {
       console.log("firstTime!");
       var mylist = accessListElements();
       setListColor(mylist, colorToSet);
       saveInfo(colorkey, colorToSet);
-      // see if apikey has been saved
-      getStorage(apikey).then( function(value) {
-        console.log(apikey, value);
-        if (value == null) {
-            value = request.message["apikey"];
-            saveInfo(apikey, value);
-            loadScript("https://maps.googleapis.com/maps/api/js?key="+value+"&callback=initMap");
-        }
-      });
+      loadGoogleMapsAPI();
+      sendResponse("recieved message");
     } // firstTime
 
+    if (request.message["message"] == "updated") {
+      console.log("updated!");
+      getStorage(colorkey).then( function(value) {
+        var mylist = accessListElements();
+        setListColor(mylist, value);
+      });
+      sendResponse("recieved message");
+    }
   }// close function
 ); // close chrome extension
-
-getStorage(colorkey).then( function(value) {
-  var mylist = accessListElements();
-  setListColor(mylist, value);
-});
 
 
 ///////////////// Helper Methods ///////////////////////////
@@ -37,30 +34,47 @@ getStorage(colorkey).then( function(value) {
 function getStorage(key){
   return new Promise(function(resolve, reject) {
     chrome.storage.sync.get(key, function(result) {
-      console.log(key, result[key]);
       resolve(result[key]);
     }); // close chrome.storage.sync.get
   }); // new Promise
 }
 
-function loadScript(url){
-  console.log("loading script. url: ", url);
-  var script = document.createElement("script");
-  script.src = url;
-  script.defer = true;
-  document.body.appendChild(script);
+function loadGoogleMapsAPI(){
+  getStorage(apikey).then( function(value) {
+    if (value != null) {
+      addScriptTag(null,function initMap() {
+        var latlng = new google.maps.LatLng(52.5208941,13.3338992);
+        map = new google.maps.Map(document.querySelector('canvas'), {
+            center: latlng,
+            zoom: 10
+        });
+        console.log("map (inside): ", map);
+        return map;
+        }
+      );
+      addScriptTag("https://maps.googleapis.com/maps/api/js?key="+value+"&callback=initMap",null);
+    }
+  });
 }
 
-function initMap() {
-  bounds = new google.maps.Map.getBounds();
-  console.log("map bounds: {}", bounds)
-  // map = new google.maps.Map(document.getElementById('map'), {
-  //     center: {
-  //         lat: -34.397,
-  //         lng: 150.644
-  //     },
-  //     zoom: 10
-  // });
+function addScriptTag(url, code){
+  var script = document.createElement("script");
+  if (url != null) {
+    script.src = url;
+    script.defer = true;
+    document.body.appendChild(script);
+  } else if (code != null) {
+    console.log(code);
+    script.type = 'text/javascript';
+    var code = code;
+    try {
+        script.appendChild(document.createTextNode(code));
+        document.body.appendChild(script);
+    } catch (e) {
+      script.text = code;
+      document.body.appendChild(script);
+    }
+  }
 }
 
 function setListColor(mylist, color){

@@ -5,21 +5,23 @@
   "content_scripts": [
     {
       "matches": [
-          "https://www.google.de/maps/@*/data=*",
-	  "https://www.google.com/maps/@*/data=*"
+        "https://www.google.de/maps/@*/data=*",
+        "https://www.google.com/maps/@*/data=*"
       ],
-	"js": ["jquery-3.3.1.min.js", "content.js"],
-	"css":["bootstrap-4.0.0/scss/bootstrap.scss"],
-	"run_at": "document_end"
+      "js": ["jquery-3.3.1.min.js", "content.js"],
+      "css":["bootstrap-4.0.0/scss/bootstrap.scss"],
+      "all_frames" : false,
+      "run_at": "document_end"
     }
   ],
   "browser_action": {
     "default_icon": "icon.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js"],
+    "peristence": true
   },
   "permissions": [
-      "storage", "tabs", "activeTab",  "history", "webNavigation", "https://www.google.de/maps/@*/data=*"
-    ]
+    "storage", "tabs", "activeTab",  "history", "webNavigation", "https://www.google.de/maps/@*/data=*"
+  ]
 }
