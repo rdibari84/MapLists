@@ -6,7 +6,7 @@ var map;
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    console.log("heard a message!");
+    
     // if this is the first time the extension has been loaded
     if (request.message["message"] == "firstTime") {
       console.log("firstTime!");
@@ -84,6 +84,7 @@ function setListColor(mylist, color){
     icon = element.querySelector("div.section-common-icon");
 
     if (textElement.textContent.includes('cafe')) {
+      console.log("text contains 'cafe'");
       icon.style.backgroundColor = color;
     }
   });

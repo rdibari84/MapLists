@@ -12,7 +12,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 chrome.tabs.onUpdated.addListener(function(tabId,info, tab) {
    if (info.status == "complete") {
      console.log("chrome.tabs.onUpdated!");
-      //chrome.tabs.executeScript(null,{file:"content.js"});
       objToSend = {}
       objToSend["message"]="updated";
       send_message(objToSend);
