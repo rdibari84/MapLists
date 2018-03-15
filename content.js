@@ -1,4 +1,3 @@
-
 var colorkey = "cafeColor";
 var apikey = "apikey";
 var colorToSet = "red";
@@ -14,11 +13,7 @@ chrome.runtime.onMessage.addListener(
       saveStorage(colorkey, colorToSet); // saving the new color
       saveStorage(apikey, request.message[apikey]); // saving the apikey
       getStorage(apikey).then( function(value) {
-        if (value != null) {
-          loadGoogleMapsAPI(value);
-        }
-      }).then(function(map) {
-        console.log("map (outside): ", map);
+        loadGoogleMapsAPI(value);
       });
 
       sendResponse("recieved message");
