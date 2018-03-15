@@ -2,18 +2,25 @@
 var colorkey = "cafeColor";
 var apikey = "apikey";
 var colorToSet = "red";
-var map;
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    
+
     // if this is the first time the extension has been loaded
     if (request.message["message"] == "firstTime") {
       console.log("firstTime!");
       var mylist = accessListElements();
       setListColor(mylist, colorToSet);
-      saveInfo(colorkey, colorToSet);
-      loadGoogleMapsAPI();
+      saveStorage(colorkey, colorToSet); // saving the new color
+      saveStorage(apikey, request.message[apikey]); // saving the apikey
+      getStorage(apikey).then( function(value) {
+        if (value != null) {
+          loadGoogleMapsAPI(value);
+        }
+      }).then(function(map) {
+        console.log("map (outside): ", map);
+      });
+
       sendResponse("recieved message");
     } // firstTime
 
@@ -28,7 +35,6 @@ chrome.runtime.onMessage.addListener(
   }// close function
 ); // close chrome extension
 
-
 ///////////////// Helper Methods ///////////////////////////
 
 function getStorage(key){
@@ -39,22 +45,16 @@ function getStorage(key){
   }); // new Promise
 }
 
-function loadGoogleMapsAPI(){
-  getStorage(apikey).then( function(value) {
-    if (value != null) {
-      addScriptTag(null,function initMap() {
-        var latlng = new google.maps.LatLng(52.5208941,13.3338992);
-        map = new google.maps.Map(document.querySelector('canvas'), {
-            center: latlng,
-            zoom: 10
-        });
-        console.log("map (inside): ", map);
-        return map;
-        }
-      );
-      addScriptTag("https://maps.googleapis.com/maps/api/js?key="+value+"&callback=initMap",null);
-    }
+function loadGoogleMapsAPI(value){
+  addScriptTag(null, function initMap() {
+    var latlng = new google.maps.LatLng(52.5208941,13.3338992);
+    map = new google.maps.Map(document.querySelector('canvas'), {
+        center: latlng,
+        zoom: 10
+    });
+    console.log("map (inside): ", map);
   });
+  addScriptTag("https://maps.googleapis.com/maps/api/js?key="+value+"&callback=initMap",null);
 }
 
 function addScriptTag(url, code){
@@ -96,7 +96,7 @@ function accessListElements() {
   return savedPlacesList;
 }
 
-function saveInfo(key, value) {
+function saveStorage(key, value) {
   var obj = {}
   obj[key]=value;
   chrome.storage.sync.set(obj, function(){

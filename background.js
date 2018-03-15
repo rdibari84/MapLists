@@ -24,7 +24,9 @@ function send_message(value){
   // Send a message to the active tab
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     var activeTab = tabs[0];
-    chrome.tabs.sendMessage(activeTab.id, {"message": value}, function(response){console.log("response: ", response)});
+    chrome.tabs.sendMessage(activeTab.id, {"message": value}, function(response){
+      console.log("response: ", response);
+    });
     console.log("sent message: ", value, "!");
   });
 }
