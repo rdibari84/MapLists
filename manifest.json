@@ -22,6 +22,10 @@
     "peristence": true
   },
   "permissions": [
-    "storage", "tabs", "activeTab",  "history", "webNavigation", "https://www.google.de/maps/*"
+    "storage",
+    "tabs",
+    "activeTab",
+    "history",
+    "https://www.google.de/maps/*"
   ]
 }

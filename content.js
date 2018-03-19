@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener(
       saveStorage(colorkey, colorToSet); // saving the new color
       saveStorage(apikey, request.message[apikey]); // saving the apikey
       getStorage(apikey).then( function(value) {
-        loadGoogleMapsAPI(value);
+        googleMapsAPI(value);
       });
 
       sendResponse("recieved message");
@@ -40,36 +40,35 @@ function getStorage(key){
   }); // new Promise
 }
 
-function loadGoogleMapsAPI(value){
-  addScriptTag(null, function initMap() {
-    var latlng = new google.maps.LatLng(52.5208941,13.3338992);
-    map = new google.maps.Map(document.querySelector('canvas'), {
-        center: latlng,
-        zoom: 10
-    });
-    console.log("map (inside): ", map);
-  });
-  addScriptTag("https://maps.googleapis.com/maps/api/js?key="+value+"&callback=initMap",null);
-}
+function googleMapsAPI(apikey){
+  console.log("loading api");
 
-function addScriptTag(url, code){
+  // the google map code
   var script = document.createElement("script");
-  if (url != null) {
-    script.src = url;
-    script.defer = true;
-    document.body.appendChild(script);
-  } else if (code != null) {
-    console.log(code);
-    script.type = 'text/javascript';
-    var code = code;
-    try {
-        script.appendChild(document.createTextNode(code));
-        document.body.appendChild(script);
-    } catch (e) {
-      script.text = code;
-      document.body.appendChild(script);
-    }
-  }
+  script.type = 'text/javascript';
+  script.appendChild(document.createTextNode(
+      `
+        function initMap() {
+        var latlng = new google.maps.LatLng(52.5208941,13.3338992);
+        console.log("latlng: ", latlng);
+        var map = new google.maps.Map(document.querySelector('canvas'), {
+            center: latlng,
+            zoom: 10
+        });
+        console.log("map (inside): ", map);
+      }
+      `
+  ));
+  document.body.appendChild(script);
+  console.log("appened script tag with code");
+
+  // source the api
+  var script = document.createElement("script");
+  script.src = "https://maps.googleapis.com/maps/api/js?key="+apikey+"&callback=initMap";
+  script.defer = true;
+  script.async = false;
+  document.body.appendChild(script);
+  console.log("appended script tag with api");
 }
 
 function setListColor(mylist, color){

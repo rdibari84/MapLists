@@ -9,7 +9,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   });
 });
 
-chrome.tabs.onUpdated.addListener(function(tabId,info, tab) {
+chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
    if (info.status == "complete") {
      console.log("chrome.tabs.onUpdated!");
       objToSend = {}
