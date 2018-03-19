@@ -43,6 +43,16 @@ function getStorage(key){
 function googleMapsAPI(apikey){
   console.log("loading api");
 
+  // get size of current canvase
+  var canvas = document.querySelector('canvas');
+  console.log("canvas size. ", canvas.width, canvas.height)
+
+  var elem = document.createElement('div');
+  elem.id="map_canvas";
+  elem.style.cssText = 'position:absolute;width:'+canvas.width+'px;height:'+canvas.height+'px;opacity:100;z-index:100;background:#000';
+  document.body.appendChild(elem);
+  console.log("appended map_canvas div");
+
   var script = document.createElement("script");
   script.src = chrome.extension.getURL("googlemapscode.js");
   script.type = 'text/javascript';

@@ -1,7 +1,8 @@
 function initMap() {
   console.log("initMap!");
   var latlng = new google.maps.LatLng(52.5208941,13.3338992);
-  var map = new google.maps.Map(document.querySelector('canvas'), {
+
+  var map = new google.maps.Map(document.getElementById('map_canvas'), {
     center: latlng,
     zoom: 10
   });
@@ -9,7 +10,7 @@ function initMap() {
   var l = new google.maps.LatLng(52.513260, 13.465059);
   console.log("{ lat: ", l.lat(), ", long: ", l.lng(), "}");
   var marker = new google.maps.Marker({
-    position: map.getCenter(),
+    position: l,
     icon: {
       path: google.maps.SymbolPath.CIRCLE,
       scale: 10
