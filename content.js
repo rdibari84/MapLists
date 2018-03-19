@@ -43,24 +43,11 @@ function getStorage(key){
 function googleMapsAPI(apikey){
   console.log("loading api");
 
-  // the google map code
   var script = document.createElement("script");
+  script.src = chrome.extension.getURL("googlemapscode.js");
   script.type = 'text/javascript';
-  script.appendChild(document.createTextNode(
-      `
-        function initMap() {
-        var latlng = new google.maps.LatLng(52.5208941,13.3338992);
-        console.log("latlng: ", latlng);
-        var map = new google.maps.Map(document.querySelector('canvas'), {
-            center: latlng,
-            zoom: 10
-        });
-        console.log("map (inside): ", map);
-      }
-      `
-  ));
   document.body.appendChild(script);
-  console.log("appened script tag with code");
+  console.log("appended script tag with api");
 
   // source the api
   var script = document.createElement("script");

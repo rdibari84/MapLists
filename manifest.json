@@ -21,6 +21,9 @@
     "scripts": ["background.js"],
     "peristence": true
   },
+  "web_accessible_resources":[
+    "googlemapscode.js"
+  ],
   "permissions": [
     "storage",
     "tabs",
