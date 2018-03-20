@@ -21,7 +21,7 @@
     "peristence": true
   },
   "web_accessible_resources":[
-    "googlemapscode.js",
+    "googlemapscode.js"
   ],
   "permissions": [
     "storage",
