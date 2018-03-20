@@ -12,12 +12,15 @@ chrome.runtime.onMessage.addListener(
       setListColor(mylist, colorToSet);
       saveStorage(colorkey, colorToSet); // saving the new color
       saveStorage(apikey, request.message[apikey]); // saving the apikey
-      getStorage(apikey).then( function(value) {
-        googleMapsAPI(value);
-      });
-
+      // getStorage(apikey).then( function(value) {
+      //   googleMapsAPI(value);
+      // });
       sendResponse("recieved message");
     } // firstTime
+
+    addSetColorButton();
+    addDisplayMapButton();
+    addClickingFunctionality();
 
     if (request.message["message"] == "updated") {
       console.log("updated!");
@@ -98,6 +101,75 @@ function saveStorage(key, value) {
   chrome.storage.sync.get(key, function(result) {
     var value = result[key];
   });
+}
+
+//////////////////////// html additions ////////////////////
+
+function addSetColorButton() {
+  var parent = document.getElementById("context-menu");
+  var existingElement = document.getElementById("newOutterDiv");
+  if (parent != null && existingElement == null) {
+    var d = document.createElement('div');
+    d.id = "newOutterDiv";
+    d.className = "context-menu-entry kd-menulistitem";
+    parent.appendChild(d);
+    var justMadeDiv = document.getElementById("newOutterDiv");
+    // var innerDiv = document.createElement('div');
+    // innerDiv.id = "newInnerDiv";
+    // innerDiv.className = "context-menu-entry-text dropdown";
+    // innerDiv.innerText = "HelloWorld";
+    // justMadeDiv.appendChild(innerDiv);
+    var innerDiv = document.createElement('button');
+    innerDiv.id = "selectColor";
+    innerDiv.className = "context-menu-entry-text btn btn-secondary dropdown-toggle";
+    innerDiv.innerText = "HelloWorld";
+    justMadeDiv.appendChild(innerDiv);
+
+    var innerDiv = document.createElement('div');
+    innerDiv.className = "dropdown-menu";
+    innerDiv.innerHtml = `<a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>`;
+    justMadeDiv.appendChild(innerDiv);
+  }
+}
+
+function addClickingFunctionality(){
+  // on click of custom button,
+  // remove the selection from all other buttons and add selction to this one
+  var list= document.getElementsByClassName("section-tab-bar-tab");
+  $('#CustomMapButton').click(function() {
+      for (var i = 0; i < list.length; i++) {
+          var myelem = list[i];
+          $(myelem).removeClass('section-tab-bar-tab-selected');
+          $(myelem).addClass('section-tab-bar-tab-unselected');
+      }
+      $(this).removeClass('section-tab-bar-tab-unselected');
+      $(this).addClass('section-tab-bar-tab-selected');
+  });
+  // on click of the other buttons,
+  // remove the selection from custom button
+  for (var i = 0; i < list.length; i++) {
+      var myelem = list[i];
+      if (myelem.id != "CustomMapButton") {
+        $(myelem).click(function() {
+          $('#CustomMapButton').removeClass('section-tab-bar-tab-selected');
+          $('#CustomMapButton').addClass('section-tab-bar-tab-unselected');
+        });
+      }
+    }
+  }
+
+function addDisplayMapButton(){
+  var existingElement = document.getElementById("CustomMapButton");
+  var allButtons = document.querySelector('div.section-tab-bar');
+  if ( allButtons!=null & existingElement==null) {
+    var z = document.createElement('button');
+    z.id = "CustomMapButton";
+    z.className = "section-tab-bar-tab ripple-container section-tab-bar-tab-unselected";
+    z.innerText = "Display Map";
+    allButtons.appendChild(z);
+  }
 }
 
 // <div class="dropdown">
