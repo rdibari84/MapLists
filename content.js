@@ -8,9 +8,6 @@ chrome.runtime.onMessage.addListener(
     // if this is the first time the extension has been loaded
     if (request.message["message"] == "firstTime") {
       console.log("firstTime!");
-      var mylist = accessListElements();
-      setListColor(mylist, colorToSet);
-      saveStorage(colorkey, colorToSet); // saving the new color
       saveStorage(apikey, request.message[apikey]); // saving the apikey
       // getStorage(apikey).then( function(value) {
       //   googleMapsAPI(value);
@@ -18,9 +15,11 @@ chrome.runtime.onMessage.addListener(
       sendResponse("recieved message");
     } // firstTime
 
-    addSetColorButton();
+    addSelectColorButton();
+    addSelectColorButtonFunctionality();
+
     addDisplayMapButton();
-    addClickingFunctionality();
+    addDisplayMapButtonFunctionality();
 
     if (request.message["message"] == "updated") {
       console.log("updated!");
@@ -56,6 +55,7 @@ function googleMapsAPI(apikey){
   document.body.appendChild(elem);
   console.log("appended map_canvas div");
 
+  // add the actual google map code- sourcing googlemapscode.js and inserting the contents into a script tag
   var script = document.createElement("script");
   script.src = chrome.extension.getURL("googlemapscode.js");
   script.type = 'text/javascript';
@@ -105,36 +105,83 @@ function saveStorage(key, value) {
 
 //////////////////////// html additions ////////////////////
 
-function addSetColorButton() {
+////// select color button
+
+function addSelectColorButton() {
   var parent = document.getElementById("context-menu");
   var existingElement = document.getElementById("newOutterDiv");
   if (parent != null && existingElement == null) {
+    // outter most div
+    console.log("adding select color button");
     var d = document.createElement('div');
     d.id = "newOutterDiv";
-    d.className = "context-menu-entry kd-menulistitem";
+    d.className = "context-menu-entry kd-menulistitem dropright show";
     parent.appendChild(d);
-    var justMadeDiv = document.getElementById("newOutterDiv");
-    // var innerDiv = document.createElement('div');
-    // innerDiv.id = "newInnerDiv";
-    // innerDiv.className = "context-menu-entry-text dropdown";
-    // innerDiv.innerText = "HelloWorld";
-    // justMadeDiv.appendChild(innerDiv);
-    var innerDiv = document.createElement('button');
-    innerDiv.id = "selectColor";
-    innerDiv.className = "context-menu-entry-text btn btn-secondary dropdown-toggle";
-    innerDiv.innerText = "HelloWorld";
-    justMadeDiv.appendChild(innerDiv);
 
-    var innerDiv = document.createElement('div');
-    innerDiv.className = "dropdown-menu";
-    innerDiv.innerHtml = `<a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>`;
-    justMadeDiv.appendChild(innerDiv);
+    // Select Color Button
+    var justMadeDiv = document.getElementById("newOutterDiv");
+    var b = document.createElement('button');
+    b.id = "selectColorButton";
+    b.className = "context-menu-entry-text dropdown-toggle";
+    b.setAttribute("data-toggle", "dropdown");
+    b.innerText = "Select Color";
+    justMadeDiv.appendChild(b);
+
+    // the dropdown content
+    var dropdownDiv = document.createElement('div');
+    dropdownDiv.className="dropdown-menu";
+    dropdownDiv.setAttribute("aria-labelledby","dropdownMenuLink");
+    justMadeDiv.appendChild(dropdownDiv);
+
+    var item1 = document.createElement('a');
+    item1.className = "dropdown-item";
+    item1.id = "redColor";
+    item1.href = "#";
+    item1.innerText = "Red";
+    dropdownDiv.appendChild(item1);
+
+    var item2 = document.createElement('a');
+    item2.className = "dropdown-item";
+    item2.id = "blueColor";
+    item2.href = "#";
+    item2.innerText = "Blue";
+    dropdownDiv.appendChild(item2);
+
+    var item2 = document.createElement('a');
+    item2.className = "dropdown-item";
+    item2.id = "yellowColor";
+    item2.href = "#";
+    item2.innerText = "Yellow";
+    dropdownDiv.appendChild(item2);
   }
 }
 
-function addClickingFunctionality(){
+function addSelectColorButtonFunctionality(){
+  $('#blueColor').click( function() {
+    console.log("clicked the color blue!");
+    var mylist = accessListElements();
+    setListColor(mylist, "blue");
+    saveStorage(colorkey, "blue"); // saving the new
+  });
+
+  $('#redColor').click( function() {
+    console.log("clicked the color red!");
+    var mylist = accessListElements();
+    setListColor(mylist, "red");
+    saveStorage(colorkey, "red"); // saving the new
+  });
+
+  $('#yellowColor').click( function() {
+    console.log("clicked the color yellow!");
+    var mylist = accessListElements();
+    setListColor(mylist, "yellow");
+    saveStorage(colorkey, "yellow"); // saving the new
+  });
+}
+
+////// DisplayMap Button
+
+function addDisplayMapButtonFunctionality(){
   // on click of custom button,
   // remove the selection from all other buttons and add selction to this one
   var list= document.getElementsByClassName("section-tab-bar-tab");
@@ -170,15 +217,5 @@ function addDisplayMapButton(){
     z.innerText = "Display Map";
     allButtons.appendChild(z);
   }
-}
 
-// <div class="dropdown">
-//   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-//     Dropdown button
-//   </button>
-//   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-//     <a class="dropdown-item" href="#">Action</a>
-//     <a class="dropdown-item" href="#">Another action</a>
-//     <a class="dropdown-item" href="#">Something else here</a>
-//   </div>
-// </div>
+}
