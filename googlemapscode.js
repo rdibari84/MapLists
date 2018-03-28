@@ -19,7 +19,7 @@ function initMap() {
     map: map
   });
   console.log("successfully set marker. ", marker);
-
+}
 //   var existingButtons = document.querySelector("div.gm-style-mtc");
 //   console.log(existingButtons);
 //   if (existingButtons != null) {
