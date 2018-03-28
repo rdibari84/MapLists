@@ -19,4 +19,27 @@ function initMap() {
     map: map
   });
   console.log("successfully set marker. ", marker);
-}
+
+//   var existingButtons = document.querySelector("div.gm-style-mtc");
+//   console.log(existingButtons);
+//   if (existingButtons != null) {
+//     var d = document.createElement('div');
+//     d.className="gm-style-mtc"
+//     d.style="float: left";
+//     d.position= "relative";
+//     d.setAttribute("z-index", 0);
+//     existingButtons.parentNode.appendChild(d);
+//
+//     var z = document.createElement('button');
+//     z.id = "CustomMapButton";
+//     z.type = "button";
+//     z.className = "btn";
+//     z.innerText = "Close Map";
+//     z.position= "relative";
+//     d.appendChild(z);
+//   }
+//
+//   // $('#CustomMapButton').click( function(){
+//   //     console.log("closing map");
+//   // });
+// }
